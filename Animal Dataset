@@ -1,1 +1,453 @@
-{"metadata":{"kernelspec":{"language":"python","display_name":"Python 3","name":"python3"},"language_info":{"name":"python","version":"3.10.12","mimetype":"text/x-python","codemirror_mode":{"name":"ipython","version":3},"pygments_lexer":"ipython3","nbconvert_exporter":"python","file_extension":".py"},"kaggle":{"accelerator":"none","dataSources":[{"sourceId":450106,"sourceType":"datasetVersion","datasetId":205087}],"dockerImageVersionId":30918,"isInternetEnabled":true,"language":"python","sourceType":"notebook","isGpuEnabled":false}},"nbformat_minor":4,"nbformat":4,"cells":[{"cell_type":"code","source":"import os\nimport shutil \nimport random ","metadata":{"_uuid":"8f2839f25d086af736a60e9eeb907d3b93b6e0e5","_cell_guid":"b1076dfc-b9ad-4769-8c92-a6c4dae69d19","trusted":true,"execution":{"iopub.status.busy":"2025-02-21T15:00:46.605476Z","iopub.execute_input":"2025-02-21T15:00:46.605904Z","iopub.status.idle":"2025-02-21T15:00:46.613659Z","shell.execute_reply.started":"2025-02-21T15:00:46.605863Z","shell.execute_reply":"2025-02-21T15:00:46.611886Z"}},"outputs":[],"execution_count":1},{"cell_type":"code","source":"source_folder_cat = \"/kaggle/input/animal-image-datasetdog-cat-and-panda/animals/cats\"\nsource_folder_dogs = \"/kaggle/input/animal-image-datasetdog-cat-and-panda/animals/dogs\"\nsource_folder_panda = \"/kaggle/input/animal-image-datasetdog-cat-and-panda/animals/panda\"\noutput_folder = \"/kaggle/working/\"","metadata":{"trusted":true,"execution":{"iopub.status.busy":"2025-02-21T15:14:47.552634Z","iopub.execute_input":"2025-02-21T15:14:47.553080Z","iopub.status.idle":"2025-02-21T15:14:47.558530Z","shell.execute_reply.started":"2025-02-21T15:14:47.553046Z","shell.execute_reply":"2025-02-21T15:14:47.556940Z"}},"outputs":[],"execution_count":17},{"cell_type":"code","source":"images_cat = [f for f in os.listdir(source_folder_cat) if f.endswith(\".jpg\")]\nimages_dogs = [f for f in os.listdir(source_folder_dogs) if f.endswith(\".jpg\")]\nimages_panda = [f for f in os.listdir(source_folder_panda) if f.endswith(\".jpg\")]\nrandom.shuffle(images_cat)\nrandom.shuffle(images_dogs)\nrandom.shuffle(images_panda)","metadata":{"trusted":true,"execution":{"iopub.status.busy":"2025-02-21T15:12:39.345183Z","iopub.execute_input":"2025-02-21T15:12:39.345648Z","iopub.status.idle":"2025-02-21T15:12:39.358434Z","shell.execute_reply.started":"2025-02-21T15:12:39.345612Z","shell.execute_reply":"2025-02-21T15:12:39.357134Z"}},"outputs":[],"execution_count":12},{"cell_type":"code","source":"split_index = int(len(images_cat) * 0.8)\ncat_train_images = images_cat[:split_index]\ncat_val_images = images_cat[split_index:]\ndogs_train_images = images_dogs[:split_index]\ndogs_val_images = images_dogs[split_index:]\npanda_train_images = images_panda[:split_index]\npanda_val_images = images_panda[split_index:]","metadata":{"trusted":true,"execution":{"iopub.status.busy":"2025-02-21T15:12:39.792764Z","iopub.execute_input":"2025-02-21T15:12:39.793151Z","iopub.status.idle":"2025-02-21T15:12:39.799852Z","shell.execute_reply.started":"2025-02-21T15:12:39.793122Z","shell.execute_reply":"2025-02-21T15:12:39.798288Z"}},"outputs":[],"execution_count":13},{"cell_type":"code","source":"train_folder = os.path.join(output_folder, \"train\")\nval_folder = os.path.join(output_folder, \"validation\")","metadata":{"trusted":true,"execution":{"iopub.status.busy":"2025-02-21T15:14:49.887243Z","iopub.execute_input":"2025-02-21T15:14:49.887687Z","iopub.status.idle":"2025-02-21T15:14:49.893318Z","shell.execute_reply.started":"2025-02-21T15:14:49.887653Z","shell.execute_reply":"2025-02-21T15:14:49.891602Z"}},"outputs":[],"execution_count":18},{"cell_type":"code","source":"os.makedirs(train_folder, exist_ok=True)\nos.makedirs(val_folder, exist_ok=True)","metadata":{"trusted":true,"execution":{"iopub.status.busy":"2025-02-21T15:14:51.173873Z","iopub.execute_input":"2025-02-21T15:14:51.174236Z","iopub.status.idle":"2025-02-21T15:14:51.180087Z","shell.execute_reply.started":"2025-02-21T15:14:51.174207Z","shell.execute_reply":"2025-02-21T15:14:51.178639Z"}},"outputs":[],"execution_count":19},{"cell_type":"code","source":"cat = os.path.join(\"/kaggle/working/train\", \"cat\")\ndogs = os.path.join(\"/kaggle/working/train\", \"dogs\")\npanda = os.path.join(\"/kaggle/working/train\", \"panda\")\ncat_val = os.path.join(\"/kaggle/working/validation\", \"cat\")\ndogs_val = os.path.join(\"/kaggle/working/validation\", \"dogs\")\npanda_val = os.path.join(\"/kaggle/working/validation\", \"panda\")\nos.makedirs(cat, exist_ok = True)\nos.makedirs(dogs, exist_ok = True)\nos.makedirs(panda, exist_ok = True)\nos.makedirs(cat_val, exist_ok = True)\nos.makedirs(dogs_val, exist_ok = True)\nos.makedirs(panda_val, exist_ok = True)","metadata":{"trusted":true,"execution":{"iopub.status.busy":"2025-02-21T15:18:05.790893Z","iopub.execute_input":"2025-02-21T15:18:05.791384Z","iopub.status.idle":"2025-02-21T15:18:05.800846Z","shell.execute_reply.started":"2025-02-21T15:18:05.791350Z","shell.execute_reply":"2025-02-21T15:18:05.799172Z"}},"outputs":[],"execution_count":21},{"cell_type":"code","source":"for img in cat_train_images:\n    shutil.copy2(os.path.join(source_folder_cat, img),os.path.join(\"/kaggle/working/train/cat\", img))\nfor img in dogs_train_images:\n    shutil.copy2(os.path.join(source_folder_dogs, img),os.path.join(\"/kaggle/working/train/dogs\", img))\nfor img in panda_train_images:\n    shutil.copy2(os.path.join(source_folder_panda, img),os.path.join(\"/kaggle/working/train/panda\", img))\nfor img in cat_val_images:\n    shutil.copy2(os.path.join(source_folder_cat, img),os.path.join(\"/kaggle/working/validation/cat\", img))\nfor img in dogs_val_images:\n    shutil.copy2(os.path.join(source_folder_dogs, img),os.path.join(\"/kaggle/working/validation/dogs\", img))\nfor img in panda_val_images:\n    shutil.copy2(os.path.join(source_folder_panda, img),os.path.join(\"/kaggle/working/validation/panda\", img))","metadata":{"trusted":true,"execution":{"iopub.status.busy":"2025-02-21T15:23:41.016328Z","iopub.execute_input":"2025-02-21T15:23:41.016849Z","iopub.status.idle":"2025-02-21T15:24:02.894015Z","shell.execute_reply.started":"2025-02-21T15:23:41.016815Z","shell.execute_reply":"2025-02-21T15:24:02.892769Z"}},"outputs":[],"execution_count":23},{"cell_type":"code","source":"from tensorflow.keras.preprocessing.image import ImageDataGenerator\nfrom tensorflow.keras.applications import VGG16\nfrom tensorflow.keras.models import Model\nfrom tensorflow.keras.layers import Dense, Flatten\nfrom tensorflow.keras.optimizers import Adam\n\n# Define paths\ntrain_dir = \"/content/Output/train\"\nval_dir = \"/content/Output/validation\"\n# Data Augmentation & Preprocessing\ntrain_datagen = ImageDataGenerator(\n    rescale=1./255,\n    rotation_range=20,\n    width_shift_range=0.2,\n    height_shift_range=0.2,\n    shear_range=0.2,\n    zoom_range=0.2,\n    horizontal_flip=True,\n    fill_mode='nearest'\n)\n\nval_datagen = ImageDataGenerator(rescale=1./255)\n\n# Load images in batches\nbatch_size = 32\n\ntrain_generator = train_datagen.flow_from_directory(\n    train_dir,\n    target_size=(224, 224),\n    batch_size=batch_size,\n    class_mode='categorical'\n)\n\nval_generator = val_datagen.flow_from_directory(\n    val_dir,\n    target_size=(224, 224),\n    batch_size=batch_size,\n    class_mode='categorical'\n)\n\n# Load VGG16 without top layers\nbase_model = VGG16(weights='imagenet', include_top=False, input_shape=(224, 224, 3))\n\n# Freeze base model layers\nfor layer in base_model.layers:\n    layer.trainable = False\n\n# Add custom layers\nx = Flatten()(base_model.output)\nx = Dense(256, activation='relu')(x)\nx = Dense(train_generator.num_classes, activation='softmax')(x)\n\nmodel = Model(inputs=base_model.input, outputs=x)\n\n# Compile model\nmodel.compile(optimizer=Adam(learning_rate=0.0001), loss='categorical_crossentropy', metrics=['accuracy'])\n\n# Train model\nmodel.fit(\n    train_generator,\n    validation_data=val_generator,\n    epochs=10\n)\n","metadata":{"trusted":true,"execution":{"iopub.status.busy":"2025-02-21T15:29:32.240323Z","iopub.execute_input":"2025-02-21T15:29:32.240800Z"}},"outputs":[{"name":"stdout","text":"Found 2400 images belonging to 3 classes.\nFound 600 images belonging to 3 classes.\nDownloading data from https://storage.googleapis.com/tensorflow/keras-applications/vgg16/vgg16_weights_tf_dim_ordering_tf_kernels_notop.h5\n\u001b[1m58889256/58889256\u001b[0m \u001b[32m━━━━━━━━━━━━━━━━━━━━\u001b[0m\u001b[37m\u001b[0m \u001b[1m0s\u001b[0m 0us/step\nEpoch 1/10\n","output_type":"stream"},{"name":"stderr","text":"/usr/local/lib/python3.10/dist-packages/keras/src/trainers/data_adapters/py_dataset_adapter.py:122: UserWarning: Your `PyDataset` class should call `super().__init__(**kwargs)` in its constructor. `**kwargs` can include `workers`, `use_multiprocessing`, `max_queue_size`. Do not pass these arguments to `fit()`, as they will be ignored.\n  self._warn_if_super_not_called()\n","output_type":"stream"},{"name":"stdout","text":"\u001b[1m75/75\u001b[0m \u001b[32m━━━━━━━━━━━━━━━━━━━━\u001b[0m\u001b[37m\u001b[0m \u001b[1m904s\u001b[0m 12s/step - accuracy: 0.6453 - loss: 0.8087 - val_accuracy: 0.8667 - val_loss: 0.3328\nEpoch 2/10\n\u001b[1m75/75\u001b[0m \u001b[32m━━━━━━━━━━━━━━━━━━━━\u001b[0m\u001b[37m\u001b[0m \u001b[1m0s\u001b[0m 571us/step - accuracy: 0.0000e+00 - loss: 0.0000e+00\nEpoch 3/10\n","output_type":"stream"},{"name":"stderr","text":"/usr/lib/python3.10/contextlib.py:153: UserWarning: Your input ran out of data; interrupting training. Make sure that your dataset or generator can generate at least `steps_per_epoch * epochs` batches. You may need to use the `.repeat()` function when building your dataset.\n  self.gen.throw(typ, value, traceback)\n","output_type":"stream"},{"name":"stdout","text":"\u001b[1m75/75\u001b[0m \u001b[32m━━━━━━━━━━━━━━━━━━━━\u001b[0m\u001b[37m\u001b[0m \u001b[1m903s\u001b[0m 12s/step - accuracy: 0.8440 - loss: 0.3843 - val_accuracy: 0.8767 - val_loss: 0.3090\nEpoch 4/10\n\u001b[1m75/75\u001b[0m \u001b[32m━━━━━━━━━━━━━━━━━━━━\u001b[0m\u001b[37m\u001b[0m \u001b[1m26s\u001b[0m 344ms/step - accuracy: 0.0000e+00 - loss: 0.0000e+00\nEpoch 5/10\n","output_type":"stream"}],"execution_count":null},{"cell_type":"code","source":"","metadata":{"trusted":true},"outputs":[],"execution_count":null}]}
+{
+ "cells": [
+  {
+   "cell_type": "code",
+   "execution_count": 1,
+   "id": "d5232241",
+   "metadata": {
+    "_cell_guid": "b1076dfc-b9ad-4769-8c92-a6c4dae69d19",
+    "_uuid": "8f2839f25d086af736a60e9eeb907d3b93b6e0e5",
+    "execution": {
+     "iopub.execute_input": "2025-02-22T05:08:57.192216Z",
+     "iopub.status.busy": "2025-02-22T05:08:57.191871Z",
+     "iopub.status.idle": "2025-02-22T05:08:57.197440Z",
+     "shell.execute_reply": "2025-02-22T05:08:57.196542Z"
+    },
+    "papermill": {
+     "duration": 0.012061,
+     "end_time": "2025-02-22T05:08:57.199087",
+     "exception": false,
+     "start_time": "2025-02-22T05:08:57.187026",
+     "status": "completed"
+    },
+    "tags": []
+   },
+   "outputs": [],
+   "source": [
+    "import os\n",
+    "import shutil \n",
+    "import random "
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 2,
+   "id": "73fca35a",
+   "metadata": {
+    "execution": {
+     "iopub.execute_input": "2025-02-22T05:08:57.206656Z",
+     "iopub.status.busy": "2025-02-22T05:08:57.206263Z",
+     "iopub.status.idle": "2025-02-22T05:08:57.210441Z",
+     "shell.execute_reply": "2025-02-22T05:08:57.209547Z"
+    },
+    "papermill": {
+     "duration": 0.009705,
+     "end_time": "2025-02-22T05:08:57.212193",
+     "exception": false,
+     "start_time": "2025-02-22T05:08:57.202488",
+     "status": "completed"
+    },
+    "tags": []
+   },
+   "outputs": [],
+   "source": [
+    "source_folder_cat = \"/kaggle/input/animal-image-datasetdog-cat-and-panda/animals/cats\"\n",
+    "source_folder_dogs = \"/kaggle/input/animal-image-datasetdog-cat-and-panda/animals/dogs\"\n",
+    "source_folder_panda = \"/kaggle/input/animal-image-datasetdog-cat-and-panda/animals/panda\"\n",
+    "output_folder = \"/kaggle/working/\""
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 3,
+   "id": "e6a53cb9",
+   "metadata": {
+    "execution": {
+     "iopub.execute_input": "2025-02-22T05:08:57.219385Z",
+     "iopub.status.busy": "2025-02-22T05:08:57.219048Z",
+     "iopub.status.idle": "2025-02-22T05:08:57.270891Z",
+     "shell.execute_reply": "2025-02-22T05:08:57.269746Z"
+    },
+    "papermill": {
+     "duration": 0.057628,
+     "end_time": "2025-02-22T05:08:57.272866",
+     "exception": false,
+     "start_time": "2025-02-22T05:08:57.215238",
+     "status": "completed"
+    },
+    "tags": []
+   },
+   "outputs": [],
+   "source": [
+    "images_cat = [f for f in os.listdir(source_folder_cat) if f.endswith(\".jpg\")]\n",
+    "images_dogs = [f for f in os.listdir(source_folder_dogs) if f.endswith(\".jpg\")]\n",
+    "images_panda = [f for f in os.listdir(source_folder_panda) if f.endswith(\".jpg\")]\n",
+    "random.shuffle(images_cat)\n",
+    "random.shuffle(images_dogs)\n",
+    "random.shuffle(images_panda)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 4,
+   "id": "28058e14",
+   "metadata": {
+    "execution": {
+     "iopub.execute_input": "2025-02-22T05:08:57.280400Z",
+     "iopub.status.busy": "2025-02-22T05:08:57.280021Z",
+     "iopub.status.idle": "2025-02-22T05:08:57.285701Z",
+     "shell.execute_reply": "2025-02-22T05:08:57.284302Z"
+    },
+    "papermill": {
+     "duration": 0.011961,
+     "end_time": "2025-02-22T05:08:57.287892",
+     "exception": false,
+     "start_time": "2025-02-22T05:08:57.275931",
+     "status": "completed"
+    },
+    "tags": []
+   },
+   "outputs": [],
+   "source": [
+    "split_index = int(len(images_cat) * 0.8)\n",
+    "cat_train_images = images_cat[:split_index]\n",
+    "cat_val_images = images_cat[split_index:]\n",
+    "dogs_train_images = images_dogs[:split_index]\n",
+    "dogs_val_images = images_dogs[split_index:]\n",
+    "panda_train_images = images_panda[:split_index]\n",
+    "panda_val_images = images_panda[split_index:]"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 5,
+   "id": "02a84103",
+   "metadata": {
+    "execution": {
+     "iopub.execute_input": "2025-02-22T05:08:57.295519Z",
+     "iopub.status.busy": "2025-02-22T05:08:57.295140Z",
+     "iopub.status.idle": "2025-02-22T05:08:57.299475Z",
+     "shell.execute_reply": "2025-02-22T05:08:57.298534Z"
+    },
+    "papermill": {
+     "duration": 0.009727,
+     "end_time": "2025-02-22T05:08:57.300957",
+     "exception": false,
+     "start_time": "2025-02-22T05:08:57.291230",
+     "status": "completed"
+    },
+    "tags": []
+   },
+   "outputs": [],
+   "source": [
+    "train_folder = os.path.join(output_folder, \"train\")\n",
+    "val_folder = os.path.join(output_folder, \"validation\")"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 6,
+   "id": "1530d00b",
+   "metadata": {
+    "execution": {
+     "iopub.execute_input": "2025-02-22T05:08:57.308129Z",
+     "iopub.status.busy": "2025-02-22T05:08:57.307753Z",
+     "iopub.status.idle": "2025-02-22T05:08:57.312426Z",
+     "shell.execute_reply": "2025-02-22T05:08:57.311521Z"
+    },
+    "papermill": {
+     "duration": 0.010371,
+     "end_time": "2025-02-22T05:08:57.314387",
+     "exception": false,
+     "start_time": "2025-02-22T05:08:57.304016",
+     "status": "completed"
+    },
+    "tags": []
+   },
+   "outputs": [],
+   "source": [
+    "os.makedirs(train_folder, exist_ok=True)\n",
+    "os.makedirs(val_folder, exist_ok=True)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 7,
+   "id": "19c93bf8",
+   "metadata": {
+    "execution": {
+     "iopub.execute_input": "2025-02-22T05:08:57.321668Z",
+     "iopub.status.busy": "2025-02-22T05:08:57.321293Z",
+     "iopub.status.idle": "2025-02-22T05:08:57.328006Z",
+     "shell.execute_reply": "2025-02-22T05:08:57.326880Z"
+    },
+    "papermill": {
+     "duration": 0.012507,
+     "end_time": "2025-02-22T05:08:57.329845",
+     "exception": false,
+     "start_time": "2025-02-22T05:08:57.317338",
+     "status": "completed"
+    },
+    "tags": []
+   },
+   "outputs": [],
+   "source": [
+    "cat = os.path.join(\"/kaggle/working/train\", \"cat\")\n",
+    "dogs = os.path.join(\"/kaggle/working/train\", \"dogs\")\n",
+    "panda = os.path.join(\"/kaggle/working/train\", \"panda\")\n",
+    "cat_val = os.path.join(\"/kaggle/working/validation\", \"cat\")\n",
+    "dogs_val = os.path.join(\"/kaggle/working/validation\", \"dogs\")\n",
+    "panda_val = os.path.join(\"/kaggle/working/validation\", \"panda\")\n",
+    "os.makedirs(cat, exist_ok = True)\n",
+    "os.makedirs(dogs, exist_ok = True)\n",
+    "os.makedirs(panda, exist_ok = True)\n",
+    "os.makedirs(cat_val, exist_ok = True)\n",
+    "os.makedirs(dogs_val, exist_ok = True)\n",
+    "os.makedirs(panda_val, exist_ok = True)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 8,
+   "id": "53725cd3",
+   "metadata": {
+    "execution": {
+     "iopub.execute_input": "2025-02-22T05:08:57.337317Z",
+     "iopub.status.busy": "2025-02-22T05:08:57.336842Z",
+     "iopub.status.idle": "2025-02-22T05:09:15.333054Z",
+     "shell.execute_reply": "2025-02-22T05:09:15.331829Z"
+    },
+    "papermill": {
+     "duration": 18.002576,
+     "end_time": "2025-02-22T05:09:15.335559",
+     "exception": false,
+     "start_time": "2025-02-22T05:08:57.332983",
+     "status": "completed"
+    },
+    "tags": []
+   },
+   "outputs": [],
+   "source": [
+    "for img in cat_train_images:\n",
+    "    shutil.copy2(os.path.join(source_folder_cat, img),os.path.join(\"/kaggle/working/train/cat\", img))\n",
+    "for img in dogs_train_images:\n",
+    "    shutil.copy2(os.path.join(source_folder_dogs, img),os.path.join(\"/kaggle/working/train/dogs\", img))\n",
+    "for img in panda_train_images:\n",
+    "    shutil.copy2(os.path.join(source_folder_panda, img),os.path.join(\"/kaggle/working/train/panda\", img))\n",
+    "for img in cat_val_images:\n",
+    "    shutil.copy2(os.path.join(source_folder_cat, img),os.path.join(\"/kaggle/working/validation/cat\", img))\n",
+    "for img in dogs_val_images:\n",
+    "    shutil.copy2(os.path.join(source_folder_dogs, img),os.path.join(\"/kaggle/working/validation/dogs\", img))\n",
+    "for img in panda_val_images:\n",
+    "    shutil.copy2(os.path.join(source_folder_panda, img),os.path.join(\"/kaggle/working/validation/panda\", img))"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 9,
+   "id": "0997e029",
+   "metadata": {
+    "execution": {
+     "iopub.execute_input": "2025-02-22T05:09:15.343411Z",
+     "iopub.status.busy": "2025-02-22T05:09:15.343002Z",
+     "iopub.status.idle": "2025-02-22T07:41:53.395742Z",
+     "shell.execute_reply": "2025-02-22T07:41:53.394391Z"
+    },
+    "papermill": {
+     "duration": 9158.096419,
+     "end_time": "2025-02-22T07:41:53.435265",
+     "exception": false,
+     "start_time": "2025-02-22T05:09:15.338846",
+     "status": "completed"
+    },
+    "tags": []
+   },
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "Found 2400 images belonging to 3 classes.\n",
+      "Found 600 images belonging to 3 classes.\n",
+      "Downloading data from https://storage.googleapis.com/tensorflow/keras-applications/vgg16/vgg16_weights_tf_dim_ordering_tf_kernels_notop.h5\n",
+      "\u001b[1m58889256/58889256\u001b[0m \u001b[32m━━━━━━━━━━━━━━━━━━━━\u001b[0m\u001b[37m\u001b[0m \u001b[1m0s\u001b[0m 0us/step\n",
+      "Epoch 1/10\n"
+     ]
+    },
+    {
+     "name": "stderr",
+     "output_type": "stream",
+     "text": [
+      "/usr/local/lib/python3.10/dist-packages/keras/src/trainers/data_adapters/py_dataset_adapter.py:122: UserWarning: Your `PyDataset` class should call `super().__init__(**kwargs)` in its constructor. `**kwargs` can include `workers`, `use_multiprocessing`, `max_queue_size`. Do not pass these arguments to `fit()`, as they will be ignored.\n",
+      "  self._warn_if_super_not_called()\n"
+     ]
+    },
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "\u001b[1m75/75\u001b[0m \u001b[32m━━━━━━━━━━━━━━━━━━━━\u001b[0m\u001b[37m\u001b[0m \u001b[1m910s\u001b[0m 12s/step - accuracy: 0.5670 - loss: 1.0048 - val_accuracy: 0.8850 - val_loss: 0.3529\n",
+      "Epoch 2/10\n",
+      "\u001b[1m75/75\u001b[0m \u001b[32m━━━━━━━━━━━━━━━━━━━━\u001b[0m\u001b[37m\u001b[0m \u001b[1m904s\u001b[0m 12s/step - accuracy: 0.8456 - loss: 0.4276 - val_accuracy: 0.8900 - val_loss: 0.2932\n",
+      "Epoch 3/10\n",
+      "\u001b[1m75/75\u001b[0m \u001b[32m━━━━━━━━━━━━━━━━━━━━\u001b[0m\u001b[37m\u001b[0m \u001b[1m901s\u001b[0m 12s/step - accuracy: 0.8570 - loss: 0.3580 - val_accuracy: 0.9000 - val_loss: 0.2632\n",
+      "Epoch 4/10\n",
+      "\u001b[1m75/75\u001b[0m \u001b[32m━━━━━━━━━━━━━━━━━━━━\u001b[0m\u001b[37m\u001b[0m \u001b[1m919s\u001b[0m 12s/step - accuracy: 0.8693 - loss: 0.3336 - val_accuracy: 0.9100 - val_loss: 0.2356\n",
+      "Epoch 5/10\n",
+      "\u001b[1m75/75\u001b[0m \u001b[32m━━━━━━━━━━━━━━━━━━━━\u001b[0m\u001b[37m\u001b[0m \u001b[1m904s\u001b[0m 12s/step - accuracy: 0.8808 - loss: 0.2886 - val_accuracy: 0.9083 - val_loss: 0.2422\n",
+      "Epoch 6/10\n",
+      "\u001b[1m75/75\u001b[0m \u001b[32m━━━━━━━━━━━━━━━━━━━━\u001b[0m\u001b[37m\u001b[0m \u001b[1m904s\u001b[0m 12s/step - accuracy: 0.8812 - loss: 0.2876 - val_accuracy: 0.9167 - val_loss: 0.1979\n",
+      "Epoch 7/10\n",
+      "\u001b[1m75/75\u001b[0m \u001b[32m━━━━━━━━━━━━━━━━━━━━\u001b[0m\u001b[37m\u001b[0m \u001b[1m930s\u001b[0m 12s/step - accuracy: 0.8993 - loss: 0.2655 - val_accuracy: 0.9150 - val_loss: 0.2083\n",
+      "Epoch 8/10\n",
+      "\u001b[1m75/75\u001b[0m \u001b[32m━━━━━━━━━━━━━━━━━━━━\u001b[0m\u001b[37m\u001b[0m \u001b[1m930s\u001b[0m 12s/step - accuracy: 0.9130 - loss: 0.2324 - val_accuracy: 0.9200 - val_loss: 0.2415\n",
+      "Epoch 9/10\n",
+      "\u001b[1m75/75\u001b[0m \u001b[32m━━━━━━━━━━━━━━━━━━━━\u001b[0m\u001b[37m\u001b[0m \u001b[1m923s\u001b[0m 12s/step - accuracy: 0.9032 - loss: 0.2503 - val_accuracy: 0.9183 - val_loss: 0.2208\n",
+      "Epoch 10/10\n",
+      "\u001b[1m75/75\u001b[0m \u001b[32m━━━━━━━━━━━━━━━━━━━━\u001b[0m\u001b[37m\u001b[0m \u001b[1m912s\u001b[0m 12s/step - accuracy: 0.9052 - loss: 0.2214 - val_accuracy: 0.9000 - val_loss: 0.2547\n"
+     ]
+    },
+    {
+     "data": {
+      "text/plain": [
+       "<keras.src.callbacks.history.History at 0x785bd3f80940>"
+      ]
+     },
+     "execution_count": 9,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "from tensorflow.keras.preprocessing.image import ImageDataGenerator\n",
+    "from tensorflow.keras.applications import VGG16\n",
+    "from tensorflow.keras.models import Model\n",
+    "from tensorflow.keras.layers import Dense, Flatten\n",
+    "from tensorflow.keras.optimizers import Adam\n",
+    "\n",
+    "# Define paths\n",
+    "train_dir = \"/kaggle/working/train\"\n",
+    "val_dir = \"/kaggle/working/validation\"\n",
+    "# Data Augmentation & Preprocessing\n",
+    "train_datagen = ImageDataGenerator(\n",
+    "    rescale=1./255,\n",
+    "    rotation_range=20,\n",
+    "    width_shift_range=0.2,\n",
+    "    height_shift_range=0.2,\n",
+    "    shear_range=0.2,\n",
+    "    zoom_range=0.2,\n",
+    "    horizontal_flip=True,\n",
+    "    fill_mode='nearest'\n",
+    ")\n",
+    "\n",
+    "val_datagen = ImageDataGenerator(rescale=1./255)\n",
+    "\n",
+    "# Load images in batches\n",
+    "batch_size = 32\n",
+    "\n",
+    "train_generator = train_datagen.flow_from_directory(\n",
+    "    train_dir,\n",
+    "    target_size=(224, 224),\n",
+    "    batch_size=batch_size,\n",
+    "    class_mode='categorical'\n",
+    ")\n",
+    "\n",
+    "val_generator = val_datagen.flow_from_directory(\n",
+    "    val_dir,\n",
+    "    target_size=(224, 224),\n",
+    "    batch_size=batch_size,\n",
+    "    class_mode='categorical'\n",
+    ")\n",
+    "\n",
+    "# Load VGG16 without top layers\n",
+    "base_model = VGG16(weights='imagenet', include_top=False, input_shape=(224, 224, 3))\n",
+    "\n",
+    "# Freeze base model layers\n",
+    "for layer in base_model.layers:\n",
+    "    layer.trainable = False\n",
+    "\n",
+    "# Add custom layers\n",
+    "x = Flatten()(base_model.output)\n",
+    "x = Dense(256, activation='relu')(x)\n",
+    "x = Dense(train_generator.num_classes, activation='softmax')(x)\n",
+    "\n",
+    "model = Model(inputs=base_model.input, outputs=x)\n",
+    "\n",
+    "# Compile model\n",
+    "model.compile(optimizer=Adam(learning_rate=0.0001), loss='categorical_crossentropy', metrics=['accuracy'])\n",
+    "\n",
+    "# Train model\n",
+    "model.fit(\n",
+    "    train_generator,\n",
+    "    validation_data=val_generator,\n",
+    "    epochs=10\n",
+    ")\n"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "dd89470b",
+   "metadata": {
+    "papermill": {
+     "duration": 0.049474,
+     "end_time": "2025-02-22T07:41:53.531760",
+     "exception": false,
+     "start_time": "2025-02-22T07:41:53.482286",
+     "status": "completed"
+    },
+    "tags": []
+   },
+   "outputs": [],
+   "source": []
+  }
+ ],
+ "metadata": {
+  "kaggle": {
+   "accelerator": "none",
+   "dataSources": [
+    {
+     "datasetId": 205087,
+     "sourceId": 450106,
+     "sourceType": "datasetVersion"
+    }
+   ],
+   "dockerImageVersionId": 30918,
+   "isGpuEnabled": false,
+   "isInternetEnabled": true,
+   "language": "python",
+   "sourceType": "notebook"
+  },
+  "kernelspec": {
+   "display_name": "Python 3",
+   "language": "python",
+   "name": "python3"
+  },
+  "language_info": {
+   "codemirror_mode": {
+    "name": "ipython",
+    "version": 3
+   },
+   "file_extension": ".py",
+   "mimetype": "text/x-python",
+   "name": "python",
+   "nbconvert_exporter": "python",
+   "pygments_lexer": "ipython3",
+   "version": "3.10.12"
+  },
+  "papermill": {
+   "default_parameters": {},
+   "duration": 9182.225156,
+   "end_time": "2025-02-22T07:41:56.498223",
+   "environment_variables": {},
+   "exception": null,
+   "input_path": "__notebook__.ipynb",
+   "output_path": "__notebook__.ipynb",
+   "parameters": {},
+   "start_time": "2025-02-22T05:08:54.273067",
+   "version": "2.6.0"
+  }
+ },
+ "nbformat": 4,
+ "nbformat_minor": 5
+}
